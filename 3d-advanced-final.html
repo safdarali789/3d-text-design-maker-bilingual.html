@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Text Design Maker - Advanced</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        body.urdu {
+            direction: rtl;
+        }
+
+        body.english {
+            direction: ltr;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .language-toggle {
+            display: flex;
+            gap: 10px;
+            background: #f0f3ff;
+            padding: 8px;
+            border-radius: 10px;
+        }
+
+        .lang-btn {
+            padding: 10px 20px;
+            border: 2px solid transparent;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #667eea;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .control-group {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        body.urdu .control-group {
+            border-left: none;
+            border-right: 4px solid #667eea;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(102, 126, 234, 0.4);
+        }
+
+        .slider-value {
+            font-size: 0.85em;
+            color: #666;
+            text-align: center;
+        }
+
+        .effect-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .effect-btn {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .effect-btn:hover {
+            border-color: #667eea;
+            background: #f0f3ff;
+        }
+
+        .effect-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .preview-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .preview-box {
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 30px;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .buttons-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f3ff;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .info-text {
+            font-size: 0.85em;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .buttons-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="urdu">
+    <div class="container">
+        <div class="header">
+            <h1>✨ 3D Text Design Maker (Advanced) ✨</h1>
+            <p id="subtitle">اردو اور انگریزی میں شاندار 3D ڈیزائن بنائیں</p>
+            
+            <div class="language-toggle">
+                <button class="lang-btn active" onclick="switchLanguage('urdu')">🇵🇰 اردو</button>
+                <button class="lang-btn" onclick="switchLanguage('english')">🇺🇸 English</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="control-panel">
+                <div class="control-group">
+                    <label id="label-text">📝 آپ کا متن</label>
+                    <input type="text" id="textInput" value="السلام علیکم" maxlength="100" placeholder="متن درج کریں..." onchange="render()">
+                    <p class="info-text">جتنا طویل متن ڈالیں، اتنا بہتر ڈیزائن!</p>
+                </div>
+
+                <div class="control-group">
+                    <label id="label-fontSize">حروف کا سائز</label>
+                    <div class="slider-group">
+                        <input type="range" id="fontSize" min="40" max="150" value="100" onchange="updateFontSize(this.value); render();">
+                        <span class="slider-value" id="fontSizeValue">100px</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label id="label-effect">3D اثر کا انداز</label>
+                    <div class="effect-buttons">
+                        <button class="effect-btn active" data-effect="fire" onclick="setEffect(event, 'fire')">🔥 Fire</button>
+                        <button class="effect-btn" data-effect="ice" onclick="setEffect(event, 'ice')">❄️ Ice</button>
+                        <button class="effect-btn" data-effect="gold" onclick="setEffect(event, 'gold')">💛 Gold</button>
+                        <button class="effect-btn" data-effect="neon" onclick="setEffect(event, 'neon')">⚡ Neon</button>
+                        <button class="effect-btn" data-effect="shadow" onclick="setEffect(event, 'shadow')">🌑 Shadow</button>
+                        <button class="effect-btn" data-effect="rainbow" onclick="setEffect(event, 'rainbow')">🌈 Rainbow</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label id="label-shadow">سایہ کی گہرائی</label>
+                    <div class="slider-group">
+                        <input type="range" id="shadowDepth" min="5" max="50" value="25" onchange="updateShadowDepth(this.value); render();">
+                        <span class="slider-value" id="shadowDepthValue">25px</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label id="label-background">پس منظر</label>
+                    <select id="backgroundSelect" onchange="render()">
+                        <option value="gradient">گریڈینٹ (شاندار)</option>
+                        <option value="white">سفید</option>
+                        <option value="dark">تاریک</option>
+                        <option value="transparent">شفاف</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label id="label-style">ٹیکسٹ کا انداز</label>
+                    <select id="styleSelect" onchange="render()">
+                        <option value="bold">بولڈ (موٹا)</option>
+                        <option value="italic">Italic (ترچھا)</option>
+                        <option value="underline">Underline (نیچے لکیر)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="preview-container">
+                <div class="preview-box" id="previewBox">
+                    <canvas id="canvas" width="1000" height="600"></canvas>
+                </div>
+
+                <div class="buttons-group">
+                    <button class="btn btn-primary" onclick="downloadImage()">📥 ڈاؤن لوڈ (8K)</button>
+                    <button class="btn btn-secondary" onclick="resetSettings()">↺ دوبارہ شروع</button>
+                </div>
+
+                <p class="info-text" style="text-align: center;">💎 الٹرا HD (4000x3000px)</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            urdu: {
+                subtitle: "اردو اور انگریزی میں شاندار 3D ڈیزائن بنائیں",
+                'label-text': "📝 آپ کا متن",
+                'label-fontSize': "حروف کا سائز",
+                'label-effect': "3D اثر کا انداز",
+                'label-shadow': "سایہ کی گہرائی",
+                'label-background': "پس منظر",
+                'label-style': "ٹیکسٹ کا انداز",
+            },
+            english: {
+                subtitle: "Create stunning 3D text designs in Urdu & English",
+                'label-text': "📝 Your Text",
+                'label-fontSize': "Font Size",
+                'label-effect': "3D Effect Style",
+                'label-shadow': "Shadow Depth",
+                'label-background': "Background",
+                'label-style': "Text Style",
+            }
+        };
+
+        let currentLanguage = 'urdu';
+        let currentEffect = 'fire';
+
+        const colorSchemes = {
+            fire: {
+                colors: ['#ff0000', '#ff6600', '#ffaa00', '#ff3300', '#ff9900'],
+                shadows: ['#cc0000', '#ff3300', '#ff6600']
+            },
+            ice: {
+                colors: ['#00ffff', '#00ccff', '#0099ff', '#3399ff', '#66ccff'],
+                shadows: ['#0099cc', '#0066ff', '#00ccff']
+            },
+            gold: {
+                colors: ['#ffcc00', '#ffdd33', '#ffff66', '#ffbb00', '#ffee00'],
+                shadows: ['#cc9900', '#ffaa00', '#ffdd00']
+            },
+            neon: {
+                colors: ['#ff00ff', '#ff0099', '#ff33ff', '#ff66ff', '#ff00ff'],
+                shadows: ['#cc0099', '#ff0099', '#ff33ff']
+            },
+            shadow: {
+                colors: ['#333333', '#666666', '#999999', '#444444', '#555555'],
+                shadows: ['#000000', '#111111', '#222222']
+            },
+            rainbow: {
+                colors: ['#ff0000', '#ff7700', '#ffff00', '#00ff00', '#0099ff', '#9933ff'],
+                shadows: ['#cc0000', '#ff6600', '#ffee00']
+            }
+        };
+
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            document.body.classList.remove('urdu', 'english');
+            document.body.classList.add(lang);
+            
+            Object.keys(translations[lang]).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            render();
+        }
+
+        function updateFontSize(value) {
+            document.getElementById('fontSizeValue').textContent = value + 'px';
+        }
+
+        function updateShadowDepth(value) {
+            document.getElementById('shadowDepthValue').textContent = value + 'px';
+        }
+
+        function setEffect(e, effect) {
+            document.querySelectorAll('.effect-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            currentEffect = effect;
+            render();
+        }
+
+        function getAutoColor(text, index, colors) {
+            const colorIndex = index % colors.length;
+            return colors[colorIndex];
+        }
+
+        function drawAdvanced3DText(ctx, text, x, y, fontSize, shadowDepth, colors, shadows, background) {
+            // Clear canvas based on background
+            if (background === 'gradient') {
+                const grad = ctx.createLinearGradient(0, 0, ctx.canvas.width, ctx.canvas.height);
+                grad.addColorStop(0, '#667eea');
+                grad.addColorStop(1, '#764ba2');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            } else if (background === 'white') {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            } else if (background === 'dark') {
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            } else if (background === 'transparent') {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            }
+
+            ctx.font = `bold ${fontSize}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Draw deep shadows
+            for (let i = shadowDepth; i > 0; i--) {
+                const opacity = (shadowDepth - i) / shadowDepth;
+                ctx.fillStyle = `rgba(0, 0, 0, ${opacity * 0.8})`;
+                ctx.fillText(text, x + i * 2, y + i * 2);
+            }
+
+            // Draw character-by-character with colors
+            ctx.save();
+            ctx.translate(x, y);
+
+            let currentX = -ctx.measureText(text).width / 2;
+            
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const color = getAutoColor(text, i, colors);
+                
+                // Draw char with gradient
+                const charWidth = ctx.measureText(char).width;
+                const charGradient = ctx.createLinearGradient(currentX, -fontSize/2, currentX, fontSize/2);
+                charGradient.addColorStop(0, color);
+                charGradient.addColorStop(0.5, colors[(i + 1) % colors.length]);
+                charGradient.addColorStop(1, color);
+                
+                ctx.fillStyle = charGradient;
+                ctx.fillText(char, currentX + charWidth/2, 0);
+                
+                // Stroke for depth
+                ctx.strokeStyle = shadows[i % shadows.length];
+                ctx.lineWidth = 2;
+                ctx.strokeText(char, currentX + charWidth/2, 0);
+                
+                currentX += charWidth;
+            }
+
+            ctx.restore();
+
+            // Glow effect
+            ctx.shadowColor = colors[0];
+            ctx.shadowBlur = 30;
+            ctx.globalAlpha = 0.4;
+            ctx.fillStyle = colors[0];
+            ctx.font = `bold ${fontSize}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, x, y);
+            ctx.globalAlpha = 1;
+        }
+
+        function render() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const text = document.getElementById('textInput').value || 'Design';
+            const fontSize = parseInt(document.getElementById('fontSize').value);
+            const shadowDepth = parseInt(document.getElementById('shadowDepth').value);
+            const background = document.getElementById('backgroundSelect').value;
+            const scheme = colorSchemes[currentEffect];
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            drawAdvanced3DText(ctx, text, centerX, centerY, fontSize, shadowDepth, scheme.colors, scheme.shadows, background);
+        }
+
+        function downloadImage() {
+            const hires = document.createElement('canvas');
+            hires.width = 4000;
+            hires.height = 3000;
+            const ctxHires = hires.getContext('2d');
+            const scale = 4;
+
+            const text = document.getElementById('textInput').value || 'Design';
+            const fontSize = parseInt(document.getElementById('fontSize').value) * scale;
+            const shadowDepth = parseInt(document.getElementById('shadowDepth').value) * scale;
+            const background = document.getElementById('backgroundSelect').value;
+            const scheme = colorSchemes[currentEffect];
+
+            drawAdvanced3DText(ctxHires, text, 2000, 1500, fontSize, shadowDepth, scheme.colors, scheme.shadows, background);
+
+            const link = document.createElement('a');
+            link.href = hires.toDataURL('image/png');
+            link.download = `3D-Design-${Date.now()}.png`;
+            link.click();
+        }
+
+        function resetSettings() {
+            document.getElementById('textInput').value = 'السلام علیکم';
+            document.getElementById('fontSize').value = 100;
+            document.getElementById('shadowDepth').value = 25;
+            document.getElementById('backgroundSelect').value = 'gradient';
+            document.getElementById('fontSizeValue').textContent = '100px';
+            document.getElementById('shadowDepthValue').textContent = '25px';
+            document.querySelectorAll('.effect-btn')[0].click();
+            render();
+        }
+
+        setTimeout(() => render(), 500);
+    </script>
+</body>
+</html>
