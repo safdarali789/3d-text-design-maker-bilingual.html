@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Text Design Maker - Complete Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f4e 50%, #2d1b4e 100%);
+            min-height: 100vh;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .luxury-header {
+            background: linear-gradient(180deg, rgba(10, 14, 39, 0.95) 0%, rgba(26, 31, 78, 0.9) 100%);
+            border-bottom: 3px solid #d4af37;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .luxury-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+        }
+
+        .header-title {
+            font-size: 3.2em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #d4af37 0%, #f0e68c 50%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .header-subtitle {
+            color: #d4af37;
+            font-size: 1.1em;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+        }
+
+        .language-toggle {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid #d4af37;
+            border-radius: 50px;
+            padding: 10px 20px;
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        .lang-btn {
+            padding: 12px 25px;
+            border: 2px solid transparent;
+            background: transparent;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 700;
+            color: #d4af37;
+            transition: all 0.3s;
+            font-size: 1em;
+            letter-spacing: 1px;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #d4af37 0%, #f0e68c 100%);
+            color: #0a0e27;
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .premium-container {
+            max-width: 1800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .tabs-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 15px 30px;
+            border: 2px solid #d4af37;
+            background: rgba(212, 175, 55, 0.05);
+            color: #d4af37;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1em;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #d4af37 0%, #f0e68c 100%);
+            color: #0a0e27;
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .control-section {
+            background: linear-gradient(135deg, rgba(26, 31, 78, 0.8) 0%, rgba(45, 27, 78, 0.8) 100%);
+            border: 2px solid #d4af37;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 50px rgba(212, 175, 55, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            max-height: 900px;
+            overflow-y: auto;
+        }
+
+        .section-title {
+            font-size: 1.4em;
+            color: #d4af37;
+            margin-bottom: 30px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 15px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #f0e68c;
+            font-size: 1em;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"],
+        textarea,
+        select,
+        input[type="file"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #d4af37;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            transition: all 0.3s;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #f0e68c;
+            outline: none;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+        }
+
+        .color-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 3px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .color-btn.active {
+            border-color: #f0e68c;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .button-grid.col-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .option-btn {
+            padding: 14px;
+            border: 2px solid #d4af37;
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #d4af37;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .option-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .option-btn.active {
+            background: linear-gradient(135deg, #d4af37 0%, #f0e68c 100%);
+            color: #0a0e27;
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .template-card {
+            padding: 15px;
+            border: 2px solid #d4af37;
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            color: #d4af37;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .template-card:hover {
+            background: rgba(212, 175, 55, 0.15);
+        }
+
+        .template-card.active {
+            background: linear-gradient(135deg, #d4af37 0%, #f0e68c 100%);
+            color: #0a0e27;
+        }
+
+        .preview-section {
+            background: linear-gradient(135deg, rgba(26, 31, 78, 0.8) 0%, rgba(45, 27, 78, 0.8) 100%);
+            border: 2px solid #d4af37;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 50px rgba(212, 175, 55, 0.15);
+        }
+
+        .preview-box {
+            border: 3px solid #d4af37;
+            border-radius: 15px;
+            padding: 50px;
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 600px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .button-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .action-btn {
+            padding: 18px 30px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #d4af37 0%, #f0e68c 100%);
+            color: #0a0e27;
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-reset {
+            background: transparent;
+            color: #d4af37;
+            border: 2px solid #d4af37;
+        }
+
+        .btn-reset:hover {
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #d4af37 0%, #f0e68c 100%);
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37 0%, #f0e68c 100%);
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.5);
+        }
+
+        .slider-value {
+            text-align: center;
+            color: #d4af37;
+            font-weight: 700;
+        }
+
+        .info-text {
+            text-align: center;
+            color: #d4af37;
+            font-size: 0.9em;
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        @media (max-width: 1024px) {
+            .tab-content.active {
+                grid-template-columns: 1fr;
+            }
+
+            .header-title {
+                font-size: 2.2em;
+            }
+        }
+    </style>
+</head>
+<body class="urdu">
+    <div class="luxury-header">
+        <div class="header-title">✨ 3D TEXT DESIGN MAKER ✨</div>
+        <div class="header-subtitle" id="subtitle">Metallic • Multi-Coloring • Templates • Premium</div>
+        
+        <div class="language-toggle">
+            <button class="lang-btn active" onclick="switchLanguage('urdu')">🇵🇰 اردو</button>
+            <button class="lang-btn" onclick="switchLanguage('english')">🇺🇸 English</button>
+        </div>
+    </div>
+
+    <div class="premium-container">
+        <div class="tabs-header">
+            <button class="tab-btn active" onclick="switchTab('editor')" id="tab-editor">🎨 Editor</button>
+            <button class="tab-btn" onclick="switchTab('templates')" id="tab-templates">🎭 Templates</button>
+            <button class="tab-btn" onclick="switchTab('backgrounds')" id="tab-backgrounds">🖼️ Backgrounds</button>
+        </div>
+
+        <!-- EDITOR TAB -->
+        <div id="editor" class="tab-content active">
+            <div class="control-section">
+                <div class="section-title" id="sec-controls">⚙️ کنٹرول</div>
+
+                <div class="control-group">
+                    <label class="control-label" id="label-text">📝 آپ کا متن</label>
+                    <textarea id="textInput" placeholder="متن لکھیں...">السلام علیکم</textarea>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="label-fontSize">📐 سائز</label>
+                    <div class="slider-group">
+                        <input type="range" id="fontSize" min="50" max="140" value="90" onchange="updateFontSize(this.value); render();">
+                        <span class="slider-value" id="fontSizeValue">90px</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="label-multicolor">🌈 رنگین انداز</label>
+                    <div class="button-grid">
+                        <button class="option-btn active" data-color="single" onclick="setColorMode(event, 'single')">ایک رنگ</button>
+                        <button class="option-btn" data-color="rainbow" onclick="setColorMode(event, 'rainbow')">رنگین</button>
+                        <button class="option-btn" data-color="gradient" onclick="setColorMode(event, 'gradient')">گریڈینٹ</button>
+                        <button class="option-btn" data-color="custom" onclick="setColorMode(event, 'custom')">اپنا</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="label-colorpalette">رنگوں کی تھالی</label>
+                    <div class="color-palette" id="colorPalette"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="label-effect">💎 Metallic</label>
+                    <div class="button-grid col-3">
+                        <button class="option-btn active" data-effect="chrome" onclick="setEffect(event, 'chrome')">Chrome</button>
+                        <button class="option-btn" data-effect="gold" onclick="setEffect(event, 'gold')">Gold</button>
+                        <button class="option-btn" data-effect="silver" onclick="setEffect(event, 'silver')">Silver</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="label-shadow">سایہ</label>
+                    <div class="slider-group">
+                        <input type="range" id="shadowDepth" min="10" max="50" value="25" onchange="updateShadowDepth(this.value); render();">
+                        <span class="slider-value" id="shadowDepthValue">25px</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <div class="section-title" id="sec-preview">👁️ پریویو</div>
+                <div class="preview-box">
+                    <canvas id="canvas" width="1000" height="650"></canvas>
+                </div>
+                <div class="button-container">
+                    <button class="action-btn btn-download" onclick="downloadImage()">📥 Download</button>
+                    <button class="action-btn btn-reset" onclick="resetSettings()">↺ Reset</button>
+                </div>
+                <p class="info-text">💎 4000 x 2600px</p>
+            </div>
+        </div>
+
+        <!-- TEMPLATES TAB -->
+        <div id="templates" class="tab-content">
+            <div class="control-section">
+                <div class="section-title">🎭 متن ڈیزائن ٹیمپلیٹس</div>
+
+                <div class="control-group">
+                    <label class="control-label" id="label-template-cat">کیٹیگری</label>
+                    <div class="button-grid">
+                        <button class="option-btn active" onclick="loadTemplateCategory('motivational')">💪 حوصلہ</button>
+                        <button class="option-btn" onclick="loadTemplateCategory('business')">💼 کاروبار</button>
+                        <button class="option-btn" onclick="loadTemplateCategory('festive')">🎉 جشن</button>
+                        <button class="option-btn" onclick="loadTemplateCategory('quotes')">💭 حکمت</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="label-template-select">ٹیمپلیٹ منتخب کریں</label>
+                    <div class="template-grid" id="templateGrid"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="label-template-text">متن میں ترمیم</label>
+                    <textarea id="templateText" placeholder="متن لکھیں...">اپنا متن</textarea>
+                </div>
+
+                <div class="control-group">
+                    <button class="action-btn btn-download" style="width: 100%; margin-top: 10px;" onclick="downloadTemplate()">📥 ڈاؤن لوڈ</button>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <div class="section-title">پریویو</div>
+                <div class="preview-box">
+                    <canvas id="templateCanvas" width="1000" height="650"></canvas>
+                </div>
+                <p class="info-text">ٹیمپلیٹ کو منتخب کریں</p>
+            </div>
+        </div>
+
+        <!-- BACKGROUNDS TAB -->
+        <div id="backgrounds" class="tab-content">
+            <div class="control-section">
+                <div class="section-title">🖼️ بیک گراؤنڈ ٹیمپلیٹس</div>
+
+                <div class="control-group">
+                    <label class="control-label" id="label-bg-cat">کیٹیگری</label>
+                    <div class="button-grid">
+                        <button class="option-btn active" onclick="loadBgCategory('abstract')">🎨 Abstract</button>
+                        <button class="option-btn" onclick="loadBgCategory('nature')">🌿 Nature</button>
+                        <button class="option-btn" onclick="loadBgCategory('dark')">🌑 Dark</button>
+                        <button class="option-btn" onclick="loadBgCategory('gradient')">🌈 Gradient</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="label-bg-select">بیک گراؤنڈ منتخب کریں</label>
+                    <div class="template-grid" id="bgGrid"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="label-bg-upload">اپنی تصویر</label>
+                    <input type="file" id="bgUpload" accept="image/*" onchange="uploadBg(this)">
+                </div>
+
+                <div class="control-group">
+                    <button class="action-btn btn-download" style="width: 100%; margin-top: 10px;" onclick="applyBgDesign()">📥 ڈاؤن لوڈ</button>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <div class="section-title">پریویو</div>
+                <div class="preview-box">
+                    <canvas id="bgCanvas" width="1000" height="650"></canvas>
+                </div>
+                <p class="info-text">بیک گراؤنڈ دیکھیں</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            urdu: {
+                subtitle: "Metallic • Multi-Coloring • Templates • Premium",
+                'sec-controls': "⚙️ کنٹرول",
+                'sec-preview': "👁️ پریویو",
+                'label-text': "📝 آپ کا متن",
+                'label-fontSize': "📐 سائز",
+                'label-multicolor': "🌈 رنگین انداز",
+                'label-colorpalette': "رنگوں کی تھالی",
+                'label-effect': "💎 Metallic",
+                'label-shadow': "سایہ",
+                'tab-editor': "🎨 Editor",
+                'tab-templates': "🎭 Templates",
+                'tab-backgrounds': "🖼️ Backgrounds",
+            },
+            english: {
+                subtitle: "Metallic • Multi-Coloring • Templates • Premium",
+                'sec-controls': "⚙️ Controls",
+                'sec-preview': "👁️ Preview",
+                'label-text': "📝 Your Text",
+                'label-fontSize': "📐 Size",
+                'label-multicolor': "🌈 Color Mode",
+                'label-colorpalette': "Color Palette",
+                'label-effect': "💎 Metallic",
+                'label-shadow': "Shadow",
+                'tab-editor': "🎨 Editor",
+                'tab-templates': "🎭 Templates",
+                'tab-backgrounds': "🖼️ Backgrounds",
+            }
+        };
+
+        let currentLanguage = 'urdu';
+        let currentEffect = 'chrome';
+        let colorMode = 'single';
+        let selectedColor = '#FFD700';
+
+        const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#95E1D3', '#F38181', '#FECA57'];
+        const metallicSchemes = {
+            chrome: { light: '#E8E8E8', mid: '#A9A9A9', dark: '#505050', highlight: '#FFFFFF' },
+            gold: { light: '#FFD700', mid: '#DAA520', dark: '#B8860B', highlight: '#FFED4E' },
+            silver: { light: '#E5E5EA', mid: '#B0B0B0', dark: '#696969', highlight: '#FFFFFF' }
+        };
+
+        const templates = {
+            motivational: [
+                { title: 'اپنے آپ پر یقین رکھیں', text: 'Believe in Yourself' },
+                { title: 'آپ یہ کر سکتے ہیں', text: 'You Can Do It' },
+                { title: 'ہار نہ مانیں', text: 'Never Give Up' }
+            ],
+            business: [
+                { title: 'کامیابی کا سفر', text: 'Success Journey' },
+                { title: 'ترقی اور نوآوری', text: 'Growth & Innovation' },
+                { title: 'ٹیم ورک', text: 'Team Work' }
+            ],
+            festive: [
+                { title: 'خوشی کے لمحے', text: 'Happy Moments' },
+                { title: 'جشن کا وقت', text: 'Celebration Time' },
+                { title: 'خوشی پھیلائیں', text: 'Spread Joy' }
+            ],
+            quotes: [
+                { title: 'مثبت رہیں', text: 'Stay Positive' },
+                { title: 'خود بنیں', text: 'Be Yourself' },
+                { title: 'بہادری سے جییں', text: 'Live Boldly' }
+            ]
+        };
+
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            Object.keys(translations[lang]).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) element.textContent = translations[lang][key];
+            });
+            loadColorPalette();
+            render();
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function loadColorPalette() {
+            const palette = document.getElementById('colorPalette');
+            palette.innerHTML = '';
+            colors.forEach(color => {
+                const btn = document.createElement('button');
+                btn.className = 'color-btn' + (color === selectedColor ? ' active' : '');
+                btn.style.backgroundColor = color;
+                btn.onclick = () => selectColor(color, btn);
+                palette.appendChild(btn);
+            });
+        }
+
+        function selectColor(color, btn) {
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedColor = color;
+            render();
+        }
+
+        function setColorMode(e, mode) {
+            document.querySelectorAll('[data-color]').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            colorMode = mode;
+            render();
+        }
+
+        function setEffect(e, effect) {
+            document.querySelectorAll('[data-effect]').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            currentEffect = effect;
+            render();
+        }
+
+        function updateFontSize(value) {
+            document.getElementById('fontSizeValue').textContent = value + 'px';
+        }
+
+        function updateShadowDepth(value) {
+            document.getElementById('shadowDepthValue').textContent = value + 'px';
+        }
+
+        function drawMetallicText(ctx, text, x, y, fontSize, scheme, shadowDepth, colorMode, baseColor) {
+            ctx.font = `bold ${fontSize}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            if (colorMode === 'single') {
+                for (let i = shadowDepth; i > 0; i--) {
+                    ctx.fillStyle = `rgba(0, 0, 0, ${(shadowDepth - i) / shadowDepth * 0.8})`;
+                    ctx.fillText(text, x + i * 1.8, y + i * 1.8);
+                }
+
+                const gradient = ctx.createLinearGradient(x - fontSize * 2.5, y - fontSize / 2, x + fontSize * 2.5, y + fontSize / 2);
+                gradient.addColorStop(0, scheme.light);
+                gradient.addColorStop(0.3, scheme.mid);
+                gradient.addColorStop(0.7, scheme.dark);
+                gradient.addColorStop(1, scheme.light);
+
+                ctx.fillStyle = gradient;
+                ctx.fillText(text, x, y);
+                ctx.strokeStyle = scheme.dark;
+                ctx.lineWidth = 2;
+                ctx.strokeText(text, x, y);
+            } else if (colorMode === 'rainbow') {
+                const rainbow = ['#FF0000', '#FF7700', '#FFFF00', '#00FF00', '#0099FF', '#9933FF'];
+                let currentX = x - ctx.measureText(text).width / 2;
+                
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    const charWidth = ctx.measureText(char).width;
+                    const color = rainbow[i % rainbow.length];
+                    
+                    for (let s = shadowDepth; s > 0; s--) {
+                        ctx.fillStyle = `rgba(0, 0, 0, ${(shadowDepth - s) / shadowDepth * 0.5})`;
+                        ctx.fillText(char, currentX + charWidth / 2 + s, y + s);
+                    }
+                    
+                    ctx.fillStyle = color;
+                    ctx.fillText(char, currentX + charWidth / 2, y);
+                    currentX += charWidth;
+                }
+            } else if (colorMode === 'gradient') {
+                for (let i = shadowDepth; i > 0; i--) {
+                    ctx.fillStyle = `rgba(0, 0, 0, ${(shadowDepth - i) / shadowDepth * 0.8})`;
+                    ctx.fillText(text, x + i * 1.8, y + i * 1.8);
+                }
+                
+                const grad = ctx.createLinearGradient(x - fontSize * 2.5, y, x + fontSize * 2.5, y);
+                grad.addColorStop(0, baseColor);
+                grad.addColorStop(0.5, '#FFFFFF');
+                grad.addColorStop(1, baseColor);
+                ctx.fillStyle = grad;
+                ctx.fillText(text, x, y);
+            } else if (colorMode === 'custom') {
+                for (let i = shadowDepth; i > 0; i--) {
+                    ctx.fillStyle = `rgba(0, 0, 0, ${(shadowDepth - i) / shadowDepth * 0.8})`;
+                    ctx.fillText(text, x + i * 1.8, y + i * 1.8);
+                }
+                ctx.fillStyle = baseColor;
+                ctx.fillText(text, x, y);
+                ctx.strokeStyle = adjustBrightness(baseColor, 0.6);
+                ctx.lineWidth = 2;
+                ctx.strokeText(text, x, y);
+            }
+        }
+
+        function adjustBrightness(color, percent) {
+            const num = parseInt(color.replace('#',''), 16);
+            const amt = Math.round(2.55 * (percent - 1));
+            const R = Math.max(0, Math.min(255, (num >> 16) + amt));
+            const G = Math.max(0, Math.min(255, (num >> 8 & 0x00FF) + amt));
+            const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
+            return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+        }
+
+        function render() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const text = document.getElementById('textInput').value || 'السلام علیکم';
+            const fontSize = parseInt(document.getElementById('fontSize').value);
+            const shadowDepth = parseInt(document.getElementById('shadowDepth').value);
+            const scheme = metallicSchemes[currentEffect];
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            drawMetallicText(ctx, text, canvas.width / 2, canvas.height / 2, fontSize, scheme, shadowDepth, colorMode, selectedColor);
+        }
+
+        function loadTemplateCategory(category) {
+            const grid = document.getElementById('templateGrid');
+            grid.innerHTML = '';
+            templates[category].forEach((template, i) => {
+                const card = document.createElement('div');
+                card.className = 'template-card';
+                card.textContent = currentLanguage === 'urdu' ? template.title : template.text;
+                card.onclick = () => selectTemplate(template, card);
+                grid.appendChild(card);
+            });
+        }
+
+        function selectTemplate(template, card) {
+            document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            document.getElementById('templateText').value = currentLanguage === 'urdu' ? template.title : template.text;
+            renderTemplate();
+        }
+
+        function renderTemplate() {
+            const canvas = document.getElementById('templateCanvas');
+            const ctx = canvas.getContext('2d');
+            const text = document.getElementById('templateText').value;
+
+            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            grad.addColorStop(0, '#667eea');
+            grad.addColorStop(1, '#764ba2');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = 'bold 80px Arial';
+            ctx.fillStyle = '#FFD700';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = 'rgba(0,0,0,0.7)';
+            ctx.shadowBlur = 15;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 3;
+            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+        }
+
+        function downloadTemplate() {
+            const canvas = document.getElementById('templateCanvas');
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `Template-Design-${Date.now()}.png`;
+            link.click();
+        }
+
+        function loadBgCategory(category) {
+            const grid = document.getElementById('bgGrid');
+            grid.innerHTML = '';
+            const bgList = {
+                abstract: ['Abstract 1', 'Abstract 2', 'Abstract 3'],
+                nature: ['Nature 1', 'Nature 2', 'Nature 3'],
+                dark: ['Dark 1', 'Dark 2', 'Dark 3'],
+                gradient: ['Gradient 1', 'Gradient 2', 'Gradient 3']
+            };
+            bgList[category].forEach((bg, i) => {
+                const card = document.createElement('div');
+                card.className = 'template-card';
+                card.textContent = bg;
+                card.onclick = () => selectBg(card);
+                grid.appendChild(card);
+            });
+        }
+
+        function selectBg(card) {
+            document.querySelectorAll('#bgGrid .template-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+        }
+
+        function uploadBg(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        applyBgDesign();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function applyBgDesign() {
+            const canvas = document.getElementById('bgCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            grad.addColorStop(0, '#f5f5f5');
+            grad.addColorStop(1, '#e0e0e0');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function downloadImage() {
+            const canvas = document.getElementById('canvas');
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `3D-Design-${Date.now()}.png`;
+            link.click();
+        }
+
+        function resetSettings() {
+            document.getElementById('textInput').value = 'السلام علیکم';
+            document.getElementById('fontSize').value = 90;
+            document.getElementById('shadowDepth').value = 25;
+            document.getElementById('fontSizeValue').textContent = '90px';
+            document.getElementById('shadowDepthValue').textContent = '25px';
+            document.querySelectorAll('[data-color]')[0].click();
+            document.querySelectorAll('[data-effect]')[0].click();
+            loadColorPalette();
+            render();
+        }
+
+        loadColorPalette();
+        loadTemplateCategory('motivational');
+        loadBgCategory('abstract');
+        setTimeout(() => render(), 500);
+    </script>
+</body>
+</html>
