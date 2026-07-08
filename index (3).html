@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Text Design Maker - Complete</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f4e 50%, #2d1b4e 100%);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .header {
+            background: linear-gradient(180deg, rgba(10, 14, 39, 0.95) 0%, rgba(26, 31, 78, 0.9) 100%);
+            border-bottom: 3px solid #d4af37;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            background: linear-gradient(135deg, #d4af37, #f0e68c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .language-toggle {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .lang-btn {
+            padding: 10px 20px;
+            background: rgba(212, 175, 55, 0.3);
+            border: 2px solid #d4af37;
+            color: #d4af37;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .lang-btn.active {
+            background: #d4af37;
+            color: #0a0e27;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid #d4af37;
+            color: #d4af37;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #d4af37, #f0e68c);
+            color: #0a0e27;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 30px;
+        }
+
+        .panel {
+            background: linear-gradient(135deg, rgba(26, 31, 78, 0.8), rgba(45, 27, 78, 0.8));
+            border: 2px solid #d4af37;
+            border-radius: 15px;
+            padding: 30px;
+            color: #fff;
+        }
+
+        .panel h2 {
+            color: #d4af37;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 10px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-label {
+            display: block;
+            color: #f0e68c;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #d4af37;
+            color: #fff;
+            border-radius: 8px;
+            font-family: inherit;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+
+        .color-btn {
+            width: 100%;
+            height: 50px;
+            border: 3px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .color-btn.active {
+            border-color: #f0e68c;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.8);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+        }
+
+        .option-btn {
+            padding: 10px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid #d4af37;
+            color: #d4af37;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .option-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+        }
+
+        .option-btn.active {
+            background: #d4af37;
+            color: #0a0e27;
+        }
+
+        .slider-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #d4af37, #f0e68c);
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #d4af37;
+            cursor: pointer;
+        }
+
+        .slider-value {
+            color: #d4af37;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .preview {
+            background: linear-gradient(135deg, rgba(26, 31, 78, 0.8), rgba(45, 27, 78, 0.8));
+            border: 2px solid #d4af37;
+            border-radius: 15px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview h2 {
+            color: #d4af37;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 10px;
+        }
+
+        .canvas-box {
+            background: linear-gradient(135deg, #f5f5f5, #ffffff);
+            border: 2px solid #d4af37;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+            flex: 1;
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .button-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #d4af37, #f0e68c);
+            color: #0a0e27;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 2px solid #d4af37;
+            color: #d4af37;
+        }
+
+        .btn-reset:hover {
+            background: rgba(212, 175, 55, 0.2);
+        }
+
+        @media (max-width: 1024px) {
+            .tab-content.active {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>✨ 3D TEXT DESIGN MAKER ✨</h1>
+        <div style="color: #d4af37; margin-bottom: 15px;">Premium • Multi-Color • 3D Shapes • Templates</div>
+        <div class="language-toggle">
+            <button class="lang-btn active" onclick="switchLang('urdu')">🇵🇰 اردو</button>
+            <button class="lang-btn" onclick="switchLang('english')">🇺🇸 English</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('editor')" id="tab-editor">🎨 Editor</button>
+            <button class="tab-btn" onclick="switchTab('shapes')" id="tab-shapes">🎲 3D Shapes</button>
+            <button class="tab-btn" onclick="switchTab('templates')" id="tab-templates">🎭 Templates</button>
+        </div>
+
+        <!-- EDITOR TAB -->
+        <div id="editor" class="tab-content active">
+            <div class="panel">
+                <h2 id="ctrl-title">⚙️ کنٹرول</h2>
+
+                <div class="control-group">
+                    <label class="control-label" id="txt-label">📝 متن</label>
+                    <textarea id="textInput" placeholder="متن لکھیں...">السلام علیکم</textarea>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="size-label">📐 سائز</label>
+                    <div class="slider-container">
+                        <input type="range" id="fontSize" min="40" max="150" value="90" onchange="updateSize()">
+                        <span class="slider-value" id="sizeValue">90</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="color-label">🎨 رنگ منتخب کریں</label>
+                    <div class="color-grid" id="colorGrid"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="colormode-label">🌈 رنگین انداز</label>
+                    <div class="button-group">
+                        <button class="option-btn active" onclick="setColorMode(this, 'single')">ایک</button>
+                        <button class="option-btn" onclick="setColorMode(this, 'rainbow')">رنگین</button>
+                        <button class="option-btn" onclick="setColorMode(this, 'gradient')">گریڈینٹ</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="effect-label">💎 Metallic</label>
+                    <div class="button-group">
+                        <button class="option-btn active" onclick="setEffect(this, 'chrome')">Chrome</button>
+                        <button class="option-btn" onclick="setEffect(this, 'gold')">Gold</button>
+                        <button class="option-btn" onclick="setEffect(this, 'silver')">Silver</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="shadow-label">🌑 سایہ</label>
+                    <div class="slider-container">
+                        <input type="range" id="shadowDepth" min="5" max="40" value="20" onchange="updateSize()">
+                        <span class="slider-value" id="shadowValue">20</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview">
+                <h2>👁️ پریویو</h2>
+                <div class="canvas-box">
+                    <canvas id="canvas" width="900" height="500"></canvas>
+                </div>
+                <div class="button-container">
+                    <button class="action-btn btn-download" onclick="download('canvas')">📥 ڈاؤن لوڈ</button>
+                    <button class="action-btn btn-reset" onclick="resetEditor()">↺ ری سیٹ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3D SHAPES TAB -->
+        <div id="shapes" class="tab-content">
+            <div class="panel">
+                <h2>🎲 3D شکلیں</h2>
+
+                <div class="control-group">
+                    <label class="control-label" id="shape-label">شکل منتخب کریں</label>
+                    <div class="button-group">
+                        <button class="option-btn active" onclick="setShape(this, 'podium')">📍 Podium</button>
+                        <button class="option-btn" onclick="setShape(this, 'cylinder')">🔳 Cylinder</button>
+                        <button class="option-btn" onclick="setShape(this, 'pyramid')">🔺 Pyramid</button>
+                        <button class="option-btn" onclick="setShape(this, 'sphere')">🔮 Sphere</button>
+                        <button class="option-btn" onclick="setShape(this, 'wave')">〰️ Wave</button>
+                        <button class="option-btn" onclick="setShape(this, 'platform')">📦 Platform</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="shape-text-label">متن</label>
+                    <textarea id="shapeText" placeholder="متن لکھیں...">3D Design</textarea>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="shape-color-label">رنگ</label>
+                    <div class="color-grid" id="shapeColorGrid"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="shape-size-label">سائز</label>
+                    <div class="slider-container">
+                        <input type="range" id="shapeSize" min="40" max="140" value="80" onchange="renderShape()">
+                        <span class="slider-value" id="shapeSizeValue">80</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview">
+                <h2>👁️ پریویو</h2>
+                <div class="canvas-box">
+                    <canvas id="shapeCanvas" width="900" height="500"></canvas>
+                </div>
+                <div class="button-container">
+                    <button class="action-btn btn-download" onclick="download('shapeCanvas')">📥 ڈاؤن لوڈ</button>
+                    <button class="action-btn btn-reset" onclick="resetShape()">↺ ری سیٹ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEMPLATES TAB -->
+        <div id="templates" class="tab-content">
+            <div class="panel">
+                <h2>🎭 ٹیمپلیٹس</h2>
+
+                <div class="control-group">
+                    <label class="control-label" id="temp-cat-label">کیٹیگری</label>
+                    <div class="button-group">
+                        <button class="option-btn active" onclick="loadTemplates('motivational')">💪 حوصلہ</button>
+                        <button class="option-btn" onclick="loadTemplates('business')">💼 کاروبار</button>
+                        <button class="option-btn" onclick="loadTemplates('festive')">🎉 جشن</button>
+                        <button class="option-btn" onclick="loadTemplates('quotes')">💭 حکمت</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="temp-select-label">ٹیمپلیٹ منتخب کریں</label>
+                    <div class="button-group" id="templateList"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="temp-text-label">متن میں ترمیم</label>
+                    <textarea id="templateText" placeholder="متن لکھیں...">اپنا متن</textarea>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" id="temp-color-label">رنگ تھیم</label>
+                    <div class="color-grid" id="tempColorGrid"></div>
+                </div>
+            </div>
+
+            <div class="preview">
+                <h2>👁️ پریویو</h2>
+                <div class="canvas-box">
+                    <canvas id="tempCanvas" width="900" height="500"></canvas>
+                </div>
+                <div class="button-container">
+                    <button class="action-btn btn-download" onclick="download('tempCanvas')">📥 ڈاؤن لوڈ</button>
+                    <button class="action-btn btn-reset" onclick="resetTemplate()">↺ ری سیٹ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const colorPalette = [
+            '#FF0000', '#FF6600', '#FFD700', '#00FF00',
+            '#00CCFF', '#0099FF', '#9933FF', '#FF1493',
+            '#FF69B4', '#FFB6C1', '#00CED1', '#20B2AA',
+            '#32CD32', '#9932CC', '#FF4500', '#DC143C'
+        ];
+
+        let state = {
+            text: 'السلام علیکم',
+            fontSize: 90,
+            shadowDepth: 20,
+            color: '#FFD700',
+            colorMode: 'single',
+            effect: 'chrome',
+            shape: 'podium',
+            shapeColor: '#FFD700',
+            shapeSize: 80,
+            lang: 'urdu'
+        };
+
+        const templates = {
+            motivational: ['اپنے آپ پر یقین رکھیں', 'آپ یہ کر سکتے ہیں', 'ہار نہ مانیں'],
+            business: ['کامیابی کا سفر', 'ترقی اور نوآوری', 'ٹیم ورک'],
+            festive: ['خوشی کے لمحے', 'جشن کا وقت', 'خوشی پھیلائیں'],
+            quotes: ['مثبت رہیں', 'خود بنیں', 'بہادری سے جییں']
+        };
+
+        const metallic = {
+            chrome: { light: '#E8E8E8', mid: '#A9A9A9', dark: '#505050' },
+            gold: { light: '#FFD700', mid: '#DAA520', dark: '#B8860B' },
+            silver: { light: '#E5E5EA', mid: '#B0B0B0', dark: '#696969' }
+        };
+
+        function switchLang(lang) {
+            state.lang = lang;
+            document.querySelectorAll('[id$="-label"], [id$="-title"]').forEach(el => {
+                const key = el.id;
+                const text = {
+                    'ctrl-title': lang === 'urdu' ? '⚙️ کنٹرول' : '⚙️ Controls',
+                    'txt-label': lang === 'urdu' ? '📝 متن' : '📝 Text',
+                    'size-label': lang === 'urdu' ? '📐 سائز' : '📐 Size',
+                    'color-label': lang === 'urdu' ? '🎨 رنگ منتخب کریں' : '🎨 Select Color',
+                    'colormode-label': lang === 'urdu' ? '🌈 رنگین انداز' : '🌈 Color Mode',
+                    'effect-label': lang === 'urdu' ? '💎 Metallic' : '💎 Metallic',
+                    'shadow-label': lang === 'urdu' ? '🌑 سایہ' : '🌑 Shadow'
+                };
+                if (text[key]) el.textContent = text[key];
+            });
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+            setTimeout(() => {
+                if (tab === 'editor') render();
+                else if (tab === 'shapes') renderShape();
+                else if (tab === 'templates') renderTemplate();
+            }, 100);
+        }
+
+        function initColorGrid(gridId, onSelect) {
+            const grid = document.getElementById(gridId);
+            grid.innerHTML = '';
+            colorPalette.forEach(color => {
+                const btn = document.createElement('button');
+                btn.className = 'color-btn';
+                btn.style.backgroundColor = color;
+                btn.onclick = () => {
+                    grid.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    onSelect(color);
+                };
+                if (color === '#FFD700') btn.classList.add('active');
+                grid.appendChild(btn);
+            });
+        }
+
+        function updateSize() {
+            state.fontSize = parseInt(document.getElementById('fontSize').value);
+            state.shadowDepth = parseInt(document.getElementById('shadowDepth').value);
+            document.getElementById('sizeValue').textContent = state.fontSize;
+            document.getElementById('shadowValue').textContent = state.shadowDepth;
+            render();
+        }
+
+        function setColorMode(btn, mode) {
+            document.querySelectorAll('[onclick*="setColorMode"]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            state.colorMode = mode;
+            render();
+        }
+
+        function setEffect(btn, effect) {
+            document.querySelectorAll('[onclick*="setEffect"]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            state.effect = effect;
+            render();
+        }
+
+        function setShape(btn, shape) {
+            document.querySelectorAll('[onclick*="setShape"]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            state.shape = shape;
+            renderShape();
+        }
+
+        function drawText3D(ctx, text, x, y, size, color, scheme, shadow) {
+            ctx.font = `bold ${size}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            for (let i = shadow; i > 0; i--) {
+                ctx.fillStyle = `rgba(0,0,0,${(shadow-i)/shadow*0.6})`;
+                ctx.fillText(text, x + i*1.5, y + i*1.5);
+            }
+
+            if (state.colorMode === 'rainbow') {
+                const colors = ['#FF0000', '#FF7700', '#FFFF00', '#00FF00', '#00BBFF', '#9933FF'];
+                let xPos = x - ctx.measureText(text).width/2;
+                for (let i = 0; i < text.length; i++) {
+                    ctx.fillStyle = colors[i % colors.length];
+                    ctx.fillText(text[i], xPos + ctx.measureText(text.substring(0,i)).width + ctx.measureText(text[i]).width/2, y);
+                }
+            } else if (state.colorMode === 'gradient') {
+                const grad = ctx.createLinearGradient(x - size, y, x + size, y);
+                grad.addColorStop(0, color);
+                grad.addColorStop(0.5, '#FFFFFF');
+                grad.addColorStop(1, color);
+                ctx.fillStyle = grad;
+                ctx.fillText(text, x, y);
+            } else {
+                const grad = ctx.createLinearGradient(x - size*1.5, y - size/2, x + size*1.5, y + size/2);
+                grad.addColorStop(0, scheme.light);
+                grad.addColorStop(0.5, scheme.mid);
+                grad.addColorStop(1, scheme.dark);
+                ctx.fillStyle = grad;
+                ctx.fillText(text, x, y);
+                ctx.strokeStyle = scheme.dark;
+                ctx.lineWidth = 2;
+                ctx.strokeText(text, x, y);
+            }
+        }
+
+        function draw3DShape(ctx, shape, x, y, size, color) {
+            ctx.fillStyle = color;
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+
+            if (shape === 'podium') {
+                ctx.fillRect(x - size, y, size*2, size);
+                ctx.fillRect(x - size*0.6, y - size*0.5, size*1.2, size*0.5);
+            } else if (shape === 'cylinder') {
+                ctx.beginPath();
+                ctx.ellipse(x, y - size/2, size, size/3, 0, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillRect(x - size, y - size/2, size*2, size);
+                ctx.beginPath();
+                ctx.ellipse(x, y + size/2, size, size/3, 0, 0, Math.PI*2);
+                ctx.fill();
+            } else if (shape === 'pyramid') {
+                ctx.beginPath();
+                ctx.moveTo(x, y - size*0.8);
+                ctx.lineTo(x + size, y + size);
+                ctx.lineTo(x - size, y + size);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            } else if (shape === 'sphere') {
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI*2);
+                ctx.fill();
+                ctx.stroke();
+            } else if (shape === 'platform') {
+                ctx.fillRect(x - size*1.2, y, size*2.4, size*0.3);
+                ctx.fillRect(x - size*0.8, y + size*0.3, size*1.6, size*0.7);
+            } else if (shape === 'wave') {
+                ctx.beginPath();
+                for (let i = -size*2; i < size*2; i += 10) {
+                    const h = Math.sin((i + x) / 50) * size * 0.3;
+                    ctx.lineTo(i + x, y + h);
+                }
+                ctx.stroke();
+            }
+        }
+
+        function render() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            state.text = document.getElementById('textInput').value;
+            const scheme = metallic[state.effect];
+            drawText3D(ctx, state.text, canvas.width/2, canvas.height/2, state.fontSize, state.color, scheme, state.shadowDepth);
+        }
+
+        function renderShape() {
+            const canvas = document.getElementById('shapeCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            state.shapeSize = parseInt(document.getElementById('shapeSize').value);
+            document.getElementById('shapeSizeValue').textContent = state.shapeSize;
+            draw3DShape(ctx, state.shape, canvas.width/2, canvas.height/2, state.shapeSize, state.shapeColor);
+            state.shapeText = document.getElementById('shapeText').value;
+            ctx.font = 'bold 40px Arial';
+            ctx.fillStyle = '#000';
+            ctx.textAlign = 'center';
+            ctx.fillText(state.shapeText, canvas.width/2, 50);
+        }
+
+        function loadTemplates(category) {
+            const list = document.getElementById('templateList');
+            list.innerHTML = '';
+            templates[category].forEach(temp => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = temp;
+                btn.onclick = () => {
+                    list.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById('templateText').value = temp;
+                    renderTemplate();
+                };
+                list.appendChild(btn);
+            });
+            list.children[0].classList.add('active');
+            renderTemplate();
+        }
+
+        function renderTemplate() {
+            const canvas = document.getElementById('tempCanvas');
+            const ctx = canvas.getContext('2d');
+            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            grad.addColorStop(0, '#667eea');
+            grad.addColorStop(1, '#764ba2');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = 'bold 70px Arial';
+            ctx.fillStyle = document.querySelector('#tempColorGrid .color-btn.active')?.style.backgroundColor || '#FFD700';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = 'rgba(0,0,0,0.8)';
+            ctx.shadowBlur = 15;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 3;
+            ctx.fillText(document.getElementById('templateText').value, canvas.width/2, canvas.height/2);
+        }
+
+        function download(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `Design-${Date.now()}.png`;
+            link.click();
+        }
+
+        function resetEditor() {
+            document.getElementById('textInput').value = 'السلام علیکم';
+            document.getElementById('fontSize').value = 90;
+            document.getElementById('shadowDepth').value = 20;
+            document.getElementById('sizeValue').textContent = '90';
+            document.getElementById('shadowValue').textContent = '20';
+            render();
+        }
+
+        function resetShape() {
+            document.getElementById('shapeText').value = '3D Design';
+            document.getElementById('shapeSize').value = 80;
+            document.getElementById('shapeSizeValue').textContent = '80';
+            renderShape();
+        }
+
+        function resetTemplate() {
+            loadTemplates('motivational');
+        }
+
+        initColorGrid('colorGrid', (color) => { state.color = color; render(); });
+        initColorGrid('shapeColorGrid', (color) => { state.shapeColor = color; renderShape(); });
+        initColorGrid('tempColorGrid', () => renderTemplate());
+        loadTemplates('motivational');
+        setTimeout(() => render(), 500);
+    </script>
+</body>
+</html>
